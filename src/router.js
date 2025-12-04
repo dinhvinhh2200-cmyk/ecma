@@ -1,14 +1,18 @@
 // src/router.js
 
 import { ProductsPage } from "./pages/ProductsPage";
-//  BẮT BUỘC: Import CartPage VÀ attachCartEvents
 import { CartPage, attachCartEvents } from "./pages/CartPage"; 
-import { renderHeader } from "./components/header"; // Cần import để đảm bảo renderHeader chạy được
+import { renderHeader } from "./components/header"; 
+import { ThankYouPage } from "./pages/ThankYouPage";
+import { AdminDashboard } from "./pages/AdminDashboard";
+import { AdminOrders } from "./pages/AdminOrders"; 
 
 const routes = {
-  "/": ProductsPage, // Đường dẫn gốc hiển thị trang sản phẩm
-  "/cart": CartPage, // Đường dẫn trang giỏ hàng
-  // ... thêm các routes khác
+  "/": ProductsPage, 
+  "/cart": CartPage, 
+  "/thankyou": ThankYouPage,
+  "/admin": AdminDashboard,
+  "/admin/orders": AdminOrders,
 };
 
 // Hàm chính xử lý định tuyến
@@ -18,18 +22,27 @@ export  const router = async () => {
   
   const appContainer = document.getElementById("app");
   if (appContainer) {
-    // appContainer.innerHTML = '<h1>Đang tải...</h1>'; 
     
-    // 1. Đảm bảo header được render (nếu chưa có)
-    await renderHeader(); 
+    // Logic ẩn/hiện header client
+    if (!path.startsWith('/admin')) {
+      await renderHeader();
+      document.querySelector('.main-header').style.display = 'flex';
+    } else {
+        // Nếu là trang admin, ẩn header client nếu nó tồn tại
+        const header = document.querySelector('.main-header');
+        if (header) {
+            header.style.display = 'none';
+        }
+    }
+    
 
-    // 2. Gọi hàm render component
+    // Gọi hàm render component
     const content = await component(); 
     
-    // 3. Cập nhật nội dung chính của trang
+    // Cập nhật nội dung chính của trang
     appContainer.innerHTML = content;
     
-    //  KHẮC PHỤC LỖI: Gọi hàm gắn sự kiện chỉ khi ở trang giỏ hàng
+    // Gắn sự kiện đặc biệt cho từng trang
     if (path === '/cart') {
         attachCartEvents();
     }

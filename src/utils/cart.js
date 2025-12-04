@@ -1,5 +1,4 @@
 // src/utils/cart.js
-// Vui lòng kiểm tra lại code này từ câu trả lời trước và đảm bảo bạn đã tạo file này.
 
 const CART_STORAGE_KEY = 'shopping_cart';
 
@@ -60,4 +59,12 @@ export const removeItem = (productId) => {
     saveCart(cart);
     updateCartCount();
     return true;
+};
+
+/**
+ * Xóa toàn bộ nội dung giỏ hàng sau khi thanh toán
+ */
+export const clearCart = () => {
+    saveCart([]);
+    updateCartCount();
 };

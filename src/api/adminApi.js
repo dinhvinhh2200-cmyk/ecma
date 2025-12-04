@@ -10,8 +10,8 @@ import {
     query,
     orderBy,
     serverTimestamp,
-    deleteField, // Dùng cho trường hợp xóa ràng buộc sản phẩm
-    where // Dùng để truy vấn sản phẩm theo category
+    deleteField,
+    where
 } from "firebase/firestore";
 
 // --- CRUD Danh mục (Categories) ---
@@ -55,7 +55,7 @@ export async function updateCategory(id, categoryData) {
 }
 
 /**
- * Xóa một danh mục và loại bỏ ràng buộc sản phẩm (Không cần phụ thuộc sản phẩm)
+ * Xóa một danh mục và loại bỏ ràng buộc sản phẩm
  * @param {string} id - ID của danh mục cần xóa
  */
 export async function deleteCategory(id) {
@@ -92,6 +92,28 @@ export async function deleteCategory(id) {
 
 
 // --- Quản lý Đơn hàng (Orders) ---
+
+/**
+ * Thêm một đơn hàng mới vào Firestore (Chức năng Thanh toán)
+ * @param {Object} orderData - { items: Array, totalPrice: number, customerName: string, status: string }
+ * @returns {string | null} ID của đơn hàng vừa tạo, hoặc null nếu thất bại
+ */
+export async function addOrder(orderData) {
+    try {
+        const ordersCollectionRef = collection(db, "orders");
+        // Dùng serverTimestamp cho createdAt
+        const docRef = await addDoc(ordersCollectionRef, { 
+            ...orderData,
+            createdAt: serverTimestamp() 
+        });
+        return docRef.id;
+    } catch (error) {
+        console.error("Lỗi khi thêm đơn hàng:", error);
+        alert("Đặt hàng thất bại. Vui lòng kiểm tra console.");
+        return null;
+    }
+}
+
 
 /**
  * Xóa một đơn hàng
@@ -146,7 +168,7 @@ export async function getStats() {
         let totalRevenue = 0;
         let totalProductsSold = 0;
         
-        // CHỈ tính các đơn hàng có trạng thái là 'Deleted' (Đơn hàng mới tạo/ghi nhận)
+        // Dựa trên logic đã có: CHỈ tính các đơn hàng có trạng thái là 'Deleted' 
         const calculatedOrders = orders.filter(order => order.status === 'Deleted');
 
         calculatedOrders.forEach(order => {

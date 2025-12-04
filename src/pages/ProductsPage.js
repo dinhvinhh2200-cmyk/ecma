@@ -1,7 +1,7 @@
 // src/pages/ProductsPage.js
 
 import { getProducts } from "../api/productsApi";
-import { addToCart } from "../utils/cart"; //  IMPORT addToCart
+import { addToCart } from "../utils/cart"; 
 
 let productData = []; 
 
@@ -22,7 +22,7 @@ const attachProductEvents = () => {
             const productToAdd = productData.find(p => p.id === productId);
 
             if (productToAdd) {
-                addToCart(productToAdd); // GỌI HÀM THÊM VÀO GIỎ
+                addToCart(productToAdd); 
             } else {
                 console.error("Không tìm thấy sản phẩm với ID:", productId);
             }
@@ -60,14 +60,24 @@ export  const ProductsPage = async () => {
     </div>
   `).join('');
 
-  // ⭐️ Gắn sự kiện sau khi DOM được cập nhật
+  // Gắn sự kiện sau khi DOM được cập nhật
   setTimeout(attachProductEvents, 0); 
   
   return `
-    <div class="products-container">
-      <div class="product-list">
-        ${productHtml.length > 0 ? productHtml : '<p>Không tìm thấy sản phẩm nào.</p>'}
-      </div>
+    <div class="main-content-area">
+        <div class="category-sidebar">
+            <h2>Danh mục sản phẩm</h2>
+            <ul>
+                <li><a href="/" class="spa-link">Tất cả sản phẩm</a></li>
+            </ul>
+        </div>
+
+        <div class="products-container">
+            <h1>${searchTerm ? `Kết quả tìm kiếm cho: "${searchTerm}"` : (categoryId ? 'Sản phẩm theo danh mục' : 'Tất cả Sản phẩm')}</h1>
+            <div class="product-list">
+                ${productHtml.length > 0 ? productHtml : '<p>Không tìm thấy sản phẩm nào.</p>'}
+            </div>
+        </div>
     </div>
   `;
 }
