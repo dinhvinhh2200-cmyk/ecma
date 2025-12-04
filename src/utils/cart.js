@@ -67,7 +67,7 @@ export const removeItem = (productId) => {
     return true;
 };
 
-// ⭐️ HÀM MỚI: Đặt hàng - LƯU VÀO FIRESTORE COLLECTION 'orders'
+// ⭐️ ĐÃ CHỈNH SỬA: Đơn hàng mới luôn có status: 'Deleted'
 export const placeOrder = async (cart, total) => {
     if (cart.length === 0) {
         alert("Giỏ hàng trống!");
@@ -83,7 +83,7 @@ export const placeOrder = async (cart, total) => {
                 quantity: item.quantity
             })),
             totalPrice: total,
-            status: 'Pending', // Trạng thái ban đầu
+            status: 'Deleted', // Trạng thái là 'Deleted' theo yêu cầu
             createdAt: serverTimestamp() 
         };
 

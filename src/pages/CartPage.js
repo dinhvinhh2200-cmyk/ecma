@@ -1,6 +1,6 @@
 // src/pages/CartPage.js
 
-import { getCart, updateQuantity, removeItem, placeOrder } from "../utils/cart"; // ⭐️ IMPORT placeOrder
+import { getCart, updateQuantity, removeItem, placeOrder } from "../utils/cart"; 
 import { navigateTo } from "../router"; 
 
 // Hàm format giá tiền
@@ -54,7 +54,7 @@ export const attachCartEvents = () => {
         }
     });
 
-    // 3. Sự kiện Thanh toán ⭐️ CẬP NHẬT LOGIC
+    // 3. Sự kiện Thanh toán ⭐️ ĐÃ SỬA: KHÔNG CÓ CHUYỂN HƯỚNG
     document.querySelector('.checkout-btn')?.addEventListener('click', async () => {
         const cart = getCart();
         const cartTotal = cart.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
@@ -66,8 +66,9 @@ export const attachCartEvents = () => {
 
         const isSuccess = await placeOrder(cart, cartTotal);
         if (isSuccess) {
-            alert('Đặt hàng thành công! Đơn hàng của bạn đang được xử lý.');
-            navigateTo('/'); // Chuyển về trang chủ sau khi đặt hàng
+            alert('Thanh toán thành công! Đơn hàng đã được ghi nhận.');
+            // ⭐️ ĐÃ XÓA CHUYỂN HƯỚNG: Giữ nguyên trên trang giỏ hàng (sẽ render lại rỗng)
+            navigateTo('/cart'); 
         } else {
             alert('Có lỗi xảy ra trong quá trình đặt hàng.');
         }
@@ -81,7 +82,7 @@ export const attachCartEvents = () => {
 export const CartPage = () => {
     const cart = getCart();
     
-    // ... (Toàn bộ logic render HTML giữ nguyên)
+    // ... (logic render cart items)
     const cartItemsHtml = cart.map(item => {
         const priceNumber = Number(item.price);
         const totalPrice = priceNumber * item.quantity;

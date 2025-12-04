@@ -51,7 +51,8 @@ const attachAdminCategoryEvents = () => {
                 document.querySelector('#submit-btn').textContent = 'Cập Nhật';
             }
         } else if (e.target.classList.contains('delete-btn')) {
-            if (category && confirm(`Bạn có chắc chắn muốn xóa danh mục "${category.name}"?`)) {
+            // Sử dụng deleteCategory (đã được cập nhật để xóa ràng buộc sản phẩm trong adminApi.js)
+            if (category && confirm(`Bạn có chắc chắn muốn xóa danh mục "${category.name}"? (Sản phẩm liên quan sẽ bị xóa thuộc tính cate_id)`)) {
                 const success = await deleteCategory(categoryId);
                 if (success) {
                     await loadCategoriesAndRender();
@@ -104,6 +105,9 @@ export const AdminCategories = async () => {
     return `
         <div class="admin-container">
             <a href="/admin" class="back-link" id="back-to-admin">← Quay lại Bảng điều khiển</a>
+            <span style="margin-left: 20px;">
+                <a href="/" class="back-link spa-link">← Quay lại Trang Client</a>
+            </span>
             <h1>📝 Quản Lý Danh Mục Sản Phẩm</h1>
             
             <div class="form-section">
