@@ -67,7 +67,7 @@ export const attachCartEvents = () => {
         const isSuccess = await placeOrder(cart, cartTotal);
         if (isSuccess) {
             alert('Thanh toán thành công! Đơn hàng đã được ghi nhận.');
-            // ⭐️ ĐÃ XÓA CHUYỂN HƯỚNG: Giữ nguyên trên trang giỏ hàng (sẽ render lại rỗng)
+            // ⭐️ KHÔNG CHUYỂN HƯỚNG: Giữ nguyên trên trang giỏ hàng (sẽ render lại rỗng)
             navigateTo('/cart'); 
         } else {
             alert('Có lỗi xảy ra trong quá trình đặt hàng.');

@@ -83,7 +83,7 @@ export const placeOrder = async (cart, total) => {
                 quantity: item.quantity
             })),
             totalPrice: total,
-            status: 'Deleted', // Trạng thái là 'Deleted' theo yêu cầu
+            status: 'Deleted', // Trạng thái là 'Deleted' theo yêu cầu (Đã ghi nhận)
             createdAt: serverTimestamp() 
         };
 

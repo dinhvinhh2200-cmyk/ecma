@@ -9,7 +9,9 @@ import {
     deleteDoc,
     query,
     orderBy,
-    serverTimestamp // Dùng cho trường hợp thêm/sửa cần timestamp
+    serverTimestamp,
+    deleteField, // Dùng cho trường hợp xóa ràng buộc sản phẩm
+    where // Dùng để truy vấn sản phẩm theo category
 } from "firebase/firestore";
 
 // --- CRUD Danh mục (Categories) ---
@@ -23,7 +25,7 @@ export async function addCategory(categoryData) {
         const categoriesCollectionRef = collection(db, "categories");
         await addDoc(categoriesCollectionRef, { 
             ...categoryData,
-            createdAt: serverTimestamp() // Thêm timestamp
+            createdAt: serverTimestamp() 
         });
         alert("Thêm danh mục thành công!");
         return true;
@@ -53,19 +55,37 @@ export async function updateCategory(id, categoryData) {
 }
 
 /**
- * Xóa một danh mục
+ * Xóa một danh mục và loại bỏ ràng buộc sản phẩm (Không cần phụ thuộc sản phẩm)
  * @param {string} id - ID của danh mục cần xóa
  */
 export async function deleteCategory(id) {
     try {
+        // BƯỚC 1: Xóa ràng buộc sản phẩm (xóa trường cate_id)
+        const productsCollectionRef = collection(db, "products");
+        const productsToDeleteQuery = query(productsCollectionRef, where("cate_id", "==", id)); 
+        const productSnapshot = await getDocs(productsToDeleteQuery);
+        
+        const updatePromises = [];
+
+        productSnapshot.forEach((productDoc) => {
+            const productRef = doc(db, "products", productDoc.id);
+            // Xóa trường cate_id khỏi sản phẩm
+            updatePromises.push(updateDoc(productRef, { 
+                cate_id: deleteField() 
+            }));
+        });
+        
+        await Promise.all(updatePromises);
+        
+        // BƯỚC 2: Xóa danh mục
         const categoryDocRef = doc(db, "categories", id);
         await deleteDoc(categoryDocRef);
-        alert("Xóa danh mục thành công!");
+        
+        alert("Xóa danh mục thành công và đã cập nhật các sản phẩm liên quan!");
         return true;
     } catch (error) {
         console.error("Lỗi khi xóa danh mục:", error);
-        // Lưu ý: Nếu có sản phẩm phụ thuộc, cần xử lý lỗi hoặc xóa sản phẩm liên quan
-        alert("Xóa danh mục thất bại (Kiểm tra xem còn sản phẩm liên quan không?).");
+        alert("Xóa danh mục thất bại.");
         return false;
     }
 }
@@ -74,19 +94,33 @@ export async function deleteCategory(id) {
 // --- Quản lý Đơn hàng (Orders) ---
 
 /**
+ * Xóa một đơn hàng
+ * @param {string} id - ID của đơn hàng cần xóa
+ */
+export async function deleteOrder(id) { 
+    try {
+        const orderDocRef = doc(db, "orders", id);
+        await deleteDoc(orderDocRef); 
+        return true;
+    } catch (error) {
+        console.error("Lỗi khi xóa đơn hàng:", error);
+        return false;
+    }
+}
+
+
+/**
  * Lấy danh sách tất cả đơn hàng
  */
 export async function getOrders() {
     try {
         const ordersCollectionRef = collection(db, "orders");
-        // Sắp xếp theo thời gian tạo mới nhất
         const ordersQuery = query(ordersCollectionRef, orderBy("createdAt", "desc")); 
         const querySnapshot = await getDocs(ordersQuery);
         
         const orderList = querySnapshot.docs.map(doc => ({ 
           id: doc.id, 
           ...doc.data(),
-          // Chuyển đổi timestamp thành đối tượng Date
           createdAt: doc.data().createdAt?.toDate() || new Date() 
         }));
         
@@ -98,26 +132,11 @@ export async function getOrders() {
     }
 }
 
-/**
- * Cập nhật trạng thái đơn hàng
- * @param {string} id - ID của đơn hàng
- * @param {string} newStatus - Trạng thái mới ('Pending', 'Processing', 'Completed', 'Cancelled')
- */
-export async function updateOrderStatus(id, newStatus) {
-    try {
-        const orderDocRef = doc(db, "orders", id);
-        await updateDoc(orderDocRef, { status: newStatus });
-        return true;
-    } catch (error) {
-        console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
-        return false;
-    }
-}
-
 // --- Thống kê (Stats) ---
 
 /**
  * Lấy dữ liệu thống kê cơ bản từ collection orders
+ * CHỈ tính các đơn hàng có trạng thái 'Deleted' vào doanh thu
  * @returns {Object} { totalRevenue: number, totalProductsSold: number }
  */
 export async function getStats() {
@@ -127,10 +146,10 @@ export async function getStats() {
         let totalRevenue = 0;
         let totalProductsSold = 0;
         
-        // Chỉ tính các đơn hàng đã hoàn thành (Completed) cho doanh thu/sản phẩm bán được
-        const completedOrders = orders.filter(order => order.status === 'Completed');
+        // CHỈ tính các đơn hàng có trạng thái là 'Deleted' (Đơn hàng mới tạo/ghi nhận)
+        const calculatedOrders = orders.filter(order => order.status === 'Deleted');
 
-        completedOrders.forEach(order => {
+        calculatedOrders.forEach(order => {
             totalRevenue += order.totalPrice || 0;
             
             if (Array.isArray(order.items)) {

@@ -28,7 +28,6 @@ const attachAdminOrderEvents = () => {
             const orderId = e.target.dataset.id;
             
             if (confirm(`Bạn có chắc chắn muốn XÓA VĨNH VIỄN đơn hàng ${orderId.substring(0, 8)}...?`)) {
-                // Sử dụng deleteOrder (đã được định nghĩa trong adminApi.js)
                 const success = await deleteOrder(orderId);
                 if (success) {
                     await loadOrdersAndRender(); // Tải lại dữ liệu
