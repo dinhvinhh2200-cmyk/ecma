@@ -11,7 +11,7 @@ const attachHeaderEvents = () => {
         link.addEventListener('click', (e) => {
             const href = link.getAttribute('href');
             // Chặn mặc định cho các link có href='#'
-            if (href === '#' || href === '/cart' || href === '/admin') { // Thêm /cart và /admin để đảm bảo navigateTo() được gọi
+            if (href === '#' || href === '/cart') { // Thêm /cart để đảm bảo navigateTo() được gọi
                  e.preventDefault();
             }
             navigateTo(href); 
@@ -81,10 +81,6 @@ export const renderHeader = async () => {
                 <a href='/cart' class='spa-link cart-link'> 
                     Giỏ hàng 
                     <span class="cart-count">${initialCartCount}</span> 
-                </a>
-                
-                <a href='/admin' class='spa-link admin-link'> 
-                    Quản trị
                 </a>
             </nav>
 
