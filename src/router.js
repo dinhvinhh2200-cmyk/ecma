@@ -1,23 +1,13 @@
-// src/router.js (CẬP NHẬT HOÀN CHỈNH)
+// src/router.js
 
 import { ProductsPage } from "./pages/ProductsPage";
+//  BẮT BUỘC: Import CartPage VÀ attachCartEvents
 import { CartPage, attachCartEvents } from "./pages/CartPage"; 
-// ⭐️ IMPORT ADMIN COMPONENTS
-import { AdminDashboard } from "./pages/AdminDashboard";
-import { AdminCategories } from "./pages/AdminCategories";
-import { AdminOrders } from "./pages/AdminOrders";
-import { AdminStats } from "./pages/AdminStats";
-
-import { renderHeader } from "./components/header"; 
+import { renderHeader } from "./components/header"; // Cần import để đảm bảo renderHeader chạy được
 
 const routes = {
-  "/": ProductsPage, 
-  "/cart": CartPage, 
-  // ⭐️ ROUTES ADMIN
-  "/admin": AdminDashboard, 
-  "/admin/categories": AdminCategories,
-  "/admin/orders": AdminOrders,
-  "/admin/stats": AdminStats,
+  "/": ProductsPage, // Đường dẫn gốc hiển thị trang sản phẩm
+  "/cart": CartPage, // Đường dẫn trang giỏ hàng
   // ... thêm các routes khác
 };
 
@@ -28,7 +18,9 @@ export  const router = async () => {
   
   const appContainer = document.getElementById("app");
   if (appContainer) {
-    // 1. Đảm bảo header được render
+    // appContainer.innerHTML = '<h1>Đang tải...</h1>'; 
+    
+    // 1. Đảm bảo header được render (nếu chưa có)
     await renderHeader(); 
 
     // 2. Gọi hàm render component
@@ -37,7 +29,7 @@ export  const router = async () => {
     // 3. Cập nhật nội dung chính của trang
     appContainer.innerHTML = content;
     
-    //  Gắn sự kiện chỉ khi ở trang giỏ hàng
+    //  KHẮC PHỤC LỖI: Gọi hàm gắn sự kiện chỉ khi ở trang giỏ hàng
     if (path === '/cart') {
         attachCartEvents();
     }
