@@ -1,6 +1,11 @@
 // src/utils/cart.js
 // Vui lòng kiểm tra lại code này từ câu trả lời trước và đảm bảo bạn đã tạo file này.
 
+// ⭐️ IMPORT THÊM CHO CHỨC NĂNG ĐẶT HÀNG
+import { db } from "../firebase/firebase"; 
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { navigateTo } from "../router"; 
+
 const CART_STORAGE_KEY = 'shopping_cart';
 
 export const getCart = () => {
@@ -60,4 +65,38 @@ export const removeItem = (productId) => {
     saveCart(cart);
     updateCartCount();
     return true;
+};
+
+// ⭐️ HÀM MỚI: Đặt hàng - LƯU VÀO FIRESTORE COLLECTION 'orders'
+export const placeOrder = async (cart, total) => {
+    if (cart.length === 0) {
+        alert("Giỏ hàng trống!");
+        return false;
+    }
+    
+    try {
+        const orderData = {
+            items: cart.map(item => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity
+            })),
+            totalPrice: total,
+            status: 'Pending', // Trạng thái ban đầu
+            createdAt: serverTimestamp() 
+        };
+
+        await addDoc(collection(db, "orders"), orderData);
+        
+        // Xóa giỏ hàng sau khi đặt hàng thành công
+        localStorage.removeItem(CART_STORAGE_KEY);
+        updateCartCount();
+        
+        return true;
+    } catch (error) {
+        console.error("Lỗi khi đặt hàng:", error);
+        alert("Đặt hàng thất bại. Vui lòng kiểm tra console.");
+        return false;
+    }
 };

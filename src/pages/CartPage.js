@@ -1,6 +1,6 @@
 // src/pages/CartPage.js
 
-import { getCart, updateQuantity, removeItem } from "../utils/cart";
+import { getCart, updateQuantity, removeItem, placeOrder } from "../utils/cart"; // ⭐️ IMPORT placeOrder
 import { navigateTo } from "../router"; 
 
 // Hàm format giá tiền
@@ -19,7 +19,7 @@ const formatPrice = (price) => {
  */
 export const attachCartEvents = () => { 
     const cartTableBody = document.querySelector('.cart-table-body');
-    if (!cartTableBody) return; // Bảo vệ, tránh lỗi nếu giỏ hàng trống
+    if (!cartTableBody) return; 
 
     // 1. Sự kiện thay đổi số lượng (dùng event delegation trên body của table)
     cartTableBody.addEventListener('change', (e) => {
@@ -54,9 +54,23 @@ export const attachCartEvents = () => {
         }
     });
 
-    // 3. Sự kiện Thanh toán
-    document.querySelector('.checkout-btn')?.addEventListener('click', () => {
-        alert('Chức năng thanh toán chưa được triển khai.');
+    // 3. Sự kiện Thanh toán ⭐️ CẬP NHẬT LOGIC
+    document.querySelector('.checkout-btn')?.addEventListener('click', async () => {
+        const cart = getCart();
+        const cartTotal = cart.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
+
+        if (cart.length === 0) {
+            alert('Giỏ hàng trống. Không thể thanh toán.');
+            return;
+        }
+
+        const isSuccess = await placeOrder(cart, cartTotal);
+        if (isSuccess) {
+            alert('Đặt hàng thành công! Đơn hàng của bạn đang được xử lý.');
+            navigateTo('/'); // Chuyển về trang chủ sau khi đặt hàng
+        } else {
+            alert('Có lỗi xảy ra trong quá trình đặt hàng.');
+        }
     });
 };
 
@@ -67,7 +81,7 @@ export const attachCartEvents = () => {
 export const CartPage = () => {
     const cart = getCart();
     
-    // ... (Toàn bộ logic render HTML)
+    // ... (Toàn bộ logic render HTML giữ nguyên)
     const cartItemsHtml = cart.map(item => {
         const priceNumber = Number(item.price);
         const totalPrice = priceNumber * item.quantity;
