@@ -84,15 +84,15 @@ export async function deleteCategory(id) {
         alert("Xóa danh mục thành công và đã cập nhật các sản phẩm liên quan!");
         return true;
     } catch (error) {
-        console.error("Lỗi khi xóa danh mục:", error);
-        alert("Xóa danh mục thất bại.");
+        // Đây là nơi hiển thị lỗi quyền truy cập
+        console.error("Lỗi khi xóa danh mục:", error); 
+        alert(`Xóa danh mục thất bại. Lỗi quyền truy cập Firebase: ${error.message}`);
         return false;
     }
 }
 
 
 // --- CRUD Sản phẩm (Products) ---
-// Tái sử dụng getProducts từ productsApi.js, chỉ cần thêm CRUD
 
 /**
  * Thêm một sản phẩm mới vào Firestore
@@ -110,7 +110,7 @@ export async function addProduct(productData) {
         return true;
     } catch (error) {
         console.error("Lỗi khi thêm sản phẩm:", error);
-        alert("Thêm sản phẩm thất bại. Vui lòng kiểm tra console.");
+        alert(`Thêm sản phẩm thất bại. Lỗi quyền truy cập Firebase: ${error.message}`);
         return false;
     }
 }
@@ -131,7 +131,7 @@ export async function updateProduct(id, productData) {
         return true;
     } catch (error) {
         console.error("Lỗi khi cập nhật sản phẩm:", error);
-        alert("Cập nhật sản phẩm thất bại. Vui lòng kiểm tra console.");
+        alert(`Cập nhật sản phẩm thất bại. Lỗi quyền truy cập Firebase: ${error.message}`);
         return false;
     }
 }
@@ -148,7 +148,7 @@ export async function deleteProduct(id) {
         return true;
     } catch (error) {
         console.error("Lỗi khi xóa sản phẩm:", error);
-        alert("Xóa sản phẩm thất bại.");
+        alert(`Xóa sản phẩm thất bại. Lỗi quyền truy cập Firebase: ${error.message}`);
         return false;
     }
 }

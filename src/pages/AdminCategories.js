@@ -1,7 +1,7 @@
 // src/pages/AdminCategories.js
 
-import { getCategories } from "../api/categoriesApi"; // Lấy danh sách để hiển thị
-import { addCategory, updateCategory, deleteCategory } from "../api/adminApi"; // CRUD functions
+import { getCategories } from "../api/categoriesApi"; 
+import { addCategory, updateCategory, deleteCategory } from "../api/adminApi"; 
 import { navigateTo } from "../router";
 
 let currentCategories = [];
@@ -43,10 +43,12 @@ const updateFormState = (category = null) => {
         editingCategoryId = category.id;
         nameInput.value = category.name;
         formTitle.textContent = "Cập Nhật Danh Mục";
+        document.querySelector('#cancel-edit-btn').style.display = 'inline-block';
     } else {
         editingCategoryId = null;
         nameInput.value = '';
         formTitle.textContent = "Thêm Danh Mục Mới";
+        document.querySelector('#cancel-edit-btn').style.display = 'none';
     }
 }
 
@@ -129,7 +131,7 @@ export const AdminCategories = async () => {
                     <form id="category-form">
                         <input type="text" id="category-name" placeholder="Tên danh mục..." required class="admin-input" />
                         <button type="submit" class="admin-button primary">Lưu Danh Mục</button>
-                        <button type="button" id="cancel-edit-btn" class="admin-button secondary">Hủy</button>
+                        <button type="button" id="cancel-edit-btn" class="admin-button secondary" style="display:none;">Hủy</button>
                     </form>
                 </div>
 

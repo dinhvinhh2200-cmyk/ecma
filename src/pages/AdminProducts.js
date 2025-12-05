@@ -1,8 +1,8 @@
 // src/pages/AdminProducts.js
 
-import { getProducts } from "../api/productsApi"; // Lấy danh sách sản phẩm
-import { getCategories } from "../api/categoriesApi"; // Lấy danh sách danh mục (cho form)
-import { addProduct, updateProduct, deleteProduct } from "../api/adminApi"; // CRUD functions
+import { getProducts } from "../api/productsApi"; 
+import { getCategories } from "../api/categoriesApi"; 
+import { addProduct, updateProduct, deleteProduct } from "../api/adminApi"; 
 import { navigateTo } from "../router";
 
 let currentProducts = [];
@@ -47,8 +47,8 @@ const renderProductList = async () => {
     if (!tableBody) return;
 
     try {
-        currentProducts = await getProducts();
-        availableCategories = await getCategories(); // Tải lại danh mục
+        currentProducts = await getProducts({}); // Lấy tất cả sản phẩm
+        availableCategories = await getCategories(); // Lấy tất cả danh mục
     } catch (e) {
         console.error("Lỗi tải sản phẩm/danh mục:", e);
         tableBody.innerHTML = '<tr><td colspan="6">Không thể tải dữ liệu sản phẩm.</td></tr>';
@@ -75,13 +75,14 @@ const renderProductList = async () => {
     `).join('');
 
     tableBody.innerHTML = productHtml;
-    // Cần render lại form để cập nhật danh mục
+    // Cần render lại form để cập nhật danh mục và trạng thái form
     renderProductForm(); 
 }
 
 const updateFormState = (product = null) => {
     const form = document.querySelector('#product-form');
     const formTitle = document.querySelector('#product-form-title');
+    const cancelButton = document.querySelector('#cancel-edit-btn');
     
     if (!form) return;
 
@@ -92,17 +93,22 @@ const updateFormState = (product = null) => {
         form.querySelector('#product-image').value = product.image || '';
         form.querySelector('#product-category').value = product.cate_id || '';
         formTitle.textContent = "Cập Nhật Sản Phẩm";
+        cancelButton.style.display = 'inline-block';
     } else {
         editingProductId = null;
         form.reset();
         formTitle.textContent = "Thêm Sản Phẩm Mới";
+        cancelButton.style.display = 'none';
     }
 }
 
 const attachProductEvents = () => {
     
+    const formContainer = document.querySelector('#product-form-container');
+    const tableBody = document.querySelector('#product-table-body');
+    
     // 1. Sự kiện Gửi Form (Thêm/Sửa)
-    document.querySelector('#product-form-container')?.addEventListener('submit', async (e) => {
+    formContainer?.addEventListener('submit', async (e) => {
         if (e.target.id !== 'product-form') return;
         e.preventDefault();
         
@@ -138,6 +144,7 @@ const attachProductEvents = () => {
             const product = currentProducts.find(p => p.id === id);
             if (product) {
                 updateFormState(product);
+                // Cuộn lên đầu để dễ chỉnh sửa
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         } 
@@ -178,7 +185,7 @@ export const AdminProducts = async () => {
             <a href="/admin" class="back-link" id="back-to-admin">← Quay lại Bảng điều khiển</a>
             <h1>💻 Quản Lý Sản Phẩm</h1>
             
-            <div id="product-form-container" class="crud-form product-form-area">
+            <div id="product-form-container" class="product-form-area">
                 </div>
 
             <h2 style="margin-top: 30px;">Danh Sách Sản Phẩm</h2>
@@ -205,6 +212,7 @@ export const AdminProducts = async () => {
             .admin-input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
             .product-thumb { width: 60px; height: 60px; object-fit: contain; }
             .product-form button { margin-right: 10px; }
+            .crud-table { overflow-x: auto; } /* fix cho bảng lớn */
         </style>
     `;
 };
