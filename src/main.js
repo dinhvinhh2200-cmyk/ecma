@@ -1,25 +1,21 @@
-// src/main.js import router.js 
+// src/main.js 
+
+// Import router.js để đảm bảo file được thực thi
 import './router.js'; 
 
-// src/main.js
-
+// Import các component cần thiết nếu muốn gọi chúng trực tiếp
 import { renderHeader } from './components/header';
 import { router } from './router'; 
 
-// Gắn sự kiện tải DOM (đã có trong router.js) và gọi các hàm khởi tạo
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Render Header (thành phần tĩnh, chỉ chạy 1 lần)
-    renderHeader(); 
-    
-    // 2. Chạy Router để tải nội dung trang đầu tiên (ví dụ: ProductsPage)
-    // Lưu ý: Hàm router() đã được gọi ở cuối file router.js, 
-    // nhưng việc gọi lại ở đây hoặc đảm bảo nó chạy sau renderHeader là cần thiết.
-    // Nếu bạn muốn giữ logic khởi tạo chính ở đây, bạn có thể gọi router() tại đây.
-    // router(); // (BỎ COMMENT NẾU BẠN LOẠI BỎ document.addEventListener từ router.js)
-});
+// FIX: Loại bỏ document.addEventListener. Router.js sẽ tự chạy một lần duy nhất.
+// Tuy nhiên, chúng ta cần đảm bảo header được render một lần đầu tiên
+// trước khi router chạy (nếu header không được chèn tĩnh vào index.html).
+// Trong trường hợp này, vì renderHeader() có logic kiểm tra nếu header tồn tại, 
+// ta sẽ gọi nó trực tiếp.
 
+// 1. Render Header (thành phần tĩnh, chỉ chạy 1 lần)
+renderHeader(); 
 
-// Lưu ý: Nếu bạn giữ nguyên: 
-// document.addEventListener('DOMContentLoaded', router);
-// ở cuối file router.js, bạn chỉ cần đảm bảo main.js chạy (và nó có import router)
-// và gọi renderHeader() ở đây.
+// FIX: BỎ LỠI: Đảm bảo router chạy lần đầu sau khi header đã được chèn.
+// Vì router.js đã có document.addEventListener('DOMContentLoaded', router), 
+// ta sẽ xóa document.addEventListener trong router.js và gọi trực tiếp router() ở đây.

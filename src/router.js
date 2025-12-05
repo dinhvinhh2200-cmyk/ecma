@@ -21,17 +21,22 @@ export  const router = async () => {
   const component = routes[path] || ProductsPage; 
   
   const appContainer = document.getElementById("app");
+  const header = document.querySelector('.main-header'); // Lấy tham chiếu đến header
+
   if (appContainer) {
     
     // Logic ẩn/hiện header client
     if (!path.startsWith('/admin')) {
-      await renderHeader();
-      document.querySelector('.main-header').style.display = 'flex';
+      // Nếu không phải trang admin: đảm bảo header hiển thị
+      if (header) {
+        header.style.display = 'flex'; // FIX: Hiện header
+      }
+      // Khong can gọi renderHeader() ở đây nữa vì nó đã được gọi trong main.js
+      // và có logic tự kiểm tra.
     } else {
-        // Nếu là trang admin, ẩn header client nếu nó tồn tại
-        const header = document.querySelector('.main-header');
+        // Nếu là trang admin: ẩn header client
         if (header) {
-            header.style.display = 'none';
+            header.style.display = 'none'; // FIX: Ẩn header
         }
     }
     
@@ -52,8 +57,16 @@ export  const router = async () => {
 // Lắng nghe sự kiện khi URL thay đổi
 window.addEventListener('popstate', router); 
 
-// Chạy router lần đầu khi tải trang
-document.addEventListener('DOMContentLoaded', router);
+// FIX: Loại bỏ document.addEventListener('DOMContentLoaded', router) ở đây
+// để tránh việc router() chạy hai lần (một lần ở đây, một lần ở main.js sau khi renderHeader()).
+// Thay vào đó, chúng ta sẽ gọi router() trực tiếp trong DOMContentLoaded ở main.js, 
+// hoặc đơn giản là gọi nó ở đây:
+
+document.addEventListener('DOMContentLoaded', () => {
+    // FIX: Đảm bảo router được gọi sau khi DOM đã sẵn sàng
+    router();
+});
+
 
 // Tạo hàm điều hướng (navigation) để chuyển đổi giữa các trang
 export const navigateTo = (url) => {

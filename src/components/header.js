@@ -99,6 +99,12 @@ export const renderHeader = async () => {
 
     if (!document.querySelector('.main-header')) {
         appContainer.insertAdjacentHTML('beforebegin', headerHtml);
+        
+        // FIX: Đảm bảo header mới tạo được hiển thị mặc định (style flex)
+        const newHeader = document.querySelector('.main-header');
+        if (newHeader) {
+            newHeader.style.display = 'flex';
+        }
     }
     
     attachHeaderEvents();
