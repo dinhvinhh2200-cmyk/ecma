@@ -80,19 +80,19 @@ export const AdminDashboard = async () => {
                 
                 <div class="admin-card">
                     <h2>Quản Lý Sản Phẩm</h2>
-                    <p>Thêm, sửa, xóa sản phẩm (Chưa triển khai giao diện).</p>
+                    <p>Thêm, sửa, xóa sản phẩm.</p>
                     <a href="/admin/products" class="admin-link">Quản Lý SP</a>
                 </div>
 
                 <div class="admin-card">
                     <h2>Quản Lý Danh Mục</h2>
-                    <p>Thêm, sửa, xóa danh mục sản phẩm (Chưa triển khai giao diện).</p>
+                    <p>Thêm, sửa, xóa danh mục sản phẩm.</p>
                     <a href="/admin/categories" class="admin-link">Quản Lý Danh Mục</a>
                 </div>
                 
                 <div class="admin-card">
                     <h2>Quản Lý Đơn Hàng</h2>
-                    <p>Xem danh sách, xóa (và cập nhật trạng thái) đơn hàng.</p>
+                    <p>Xem danh sách, xóa đơn hàng.</p>
                     <a href="/admin/orders" class="admin-link">Xem Đơn Hàng</a>
                 </div>
                 

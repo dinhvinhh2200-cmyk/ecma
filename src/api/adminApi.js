@@ -91,6 +91,69 @@ export async function deleteCategory(id) {
 }
 
 
+// --- CRUD Sản phẩm (Products) ---
+// Tái sử dụng getProducts từ productsApi.js, chỉ cần thêm CRUD
+
+/**
+ * Thêm một sản phẩm mới vào Firestore
+ * @param {Object} productData - { name: string, price: number, image: string, cate_id: string }
+ */
+export async function addProduct(productData) {
+    try {
+        const productsCollectionRef = collection(db, "products");
+        await addDoc(productsCollectionRef, { 
+            ...productData,
+            price: Number(productData.price),
+            createdAt: serverTimestamp() 
+        });
+        alert("Thêm sản phẩm thành công!");
+        return true;
+    } catch (error) {
+        console.error("Lỗi khi thêm sản phẩm:", error);
+        alert("Thêm sản phẩm thất bại. Vui lòng kiểm tra console.");
+        return false;
+    }
+}
+
+/**
+ * Cập nhật một sản phẩm
+ * @param {string} id - ID của sản phẩm cần cập nhật
+ * @param {Object} productData - Dữ liệu mới
+ */
+export async function updateProduct(id, productData) {
+    try {
+        const productDocRef = doc(db, "products", id);
+        await updateDoc(productDocRef, {
+            ...productData,
+            price: Number(productData.price) 
+        });
+        alert("Cập nhật sản phẩm thành công!");
+        return true;
+    } catch (error) {
+        console.error("Lỗi khi cập nhật sản phẩm:", error);
+        alert("Cập nhật sản phẩm thất bại. Vui lòng kiểm tra console.");
+        return false;
+    }
+}
+
+/**
+ * Xóa một sản phẩm
+ * @param {string} id - ID của sản phẩm cần xóa
+ */
+export async function deleteProduct(id) {
+    try {
+        const productDocRef = doc(db, "products", id);
+        await deleteDoc(productDocRef);
+        alert("Xóa sản phẩm thành công!");
+        return true;
+    } catch (error) {
+        console.error("Lỗi khi xóa sản phẩm:", error);
+        alert("Xóa sản phẩm thất bại.");
+        return false;
+    }
+}
+
+
 // --- Quản lý Đơn hàng (Orders) ---
 
 /**
@@ -168,7 +231,6 @@ export async function getStats() {
         let totalRevenue = 0;
         let totalProductsSold = 0;
         
-        // FIX: Thay đổi từ 'Deleted' sang 'Completed' để tính doanh thu chính xác.
         const calculatedOrders = orders.filter(order => order.status === 'Completed');
 
         calculatedOrders.forEach(order => {
