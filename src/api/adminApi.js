@@ -158,7 +158,7 @@ export async function getOrders() {
 
 /**
  * Lấy dữ liệu thống kê cơ bản từ collection orders
- * CHỈ tính các đơn hàng có trạng thái 'Deleted' vào doanh thu
+ * CHỈ tính các đơn hàng có trạng thái 'Completed' vào doanh thu
  * @returns {Object} { totalRevenue: number, totalProductsSold: number }
  */
 export async function getStats() {
@@ -168,8 +168,8 @@ export async function getStats() {
         let totalRevenue = 0;
         let totalProductsSold = 0;
         
-        // Dựa trên logic đã có: CHỈ tính các đơn hàng có trạng thái là 'Deleted' 
-        const calculatedOrders = orders.filter(order => order.status === 'Deleted');
+        // FIX: Thay đổi từ 'Deleted' sang 'Completed' để tính doanh thu chính xác.
+        const calculatedOrders = orders.filter(order => order.status === 'Completed');
 
         calculatedOrders.forEach(order => {
             totalRevenue += order.totalPrice || 0;

@@ -72,7 +72,7 @@ export const AdminDashboard = async () => {
             <div class="stats-grid" id="stats-container">
                 <p>Đang tải thống kê...</p>
             </div>
-            <p class="note">Lưu ý: Doanh thu hiện đang được tính dựa trên đơn hàng có trạng thái 'Deleted'.</p>
+            <p class="note">Lưu ý: Doanh thu hiện đang được tính dựa trên đơn hàng có trạng thái 'Completed' (Hoàn thành).</p>
 
 
             <h2 style="margin-top: 40px;">Quản Lý Nội Dung</h2>

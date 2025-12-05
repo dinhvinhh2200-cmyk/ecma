@@ -1,5 +1,5 @@
 // src/pages/AdminOrders.js
-import { getOrders, deleteOrder } from "../api/adminApi"; // Chỉ import getOrders và deleteOrder
+import { getOrders, deleteOrder } from "../api/adminApi"; 
 import { navigateTo } from "../router";
 
 // Hàm format giá tiền
@@ -17,6 +17,26 @@ const formatDate = (date) => {
     // Định dạng ngày/tháng/năm
     return date instanceof Date ? date.toLocaleDateString('vi-VN') : 'N/A';
 }
+
+/**
+ * FIX: Helper function để xác định CSS class dựa trên trạng thái (dựa trên admin.css)
+ */
+const getStatusClass = (status) => {
+    switch (status) {
+        case 'Pending':
+            return 'status-pending';
+        case 'Processing':
+            return 'status-processing';
+        case 'Completed':
+            return 'status-completed';
+        case 'Cancelled':
+            return 'status-cancelled';
+        // Nếu có trạng thái lạ, mặc định là pending hoặc một màu khác
+        default:
+            return 'status-pending'; 
+    }
+}
+
 
 let currentOrders = [];
 
@@ -64,7 +84,7 @@ const loadOrdersAndRender = async () => {
                 <td>${formatDate(order.createdAt)}</td>
                 <td>${formatPrice(order.totalPrice)}</td>
                 <td>
-                    <span class="status-label status-deleted">${order.status}</span>
+                    <span class="status-label ${getStatusClass(order.status)}">${order.status}</span>
                 </td>
                 <td>
                     <button class="delete-order-btn admin-button delete" data-id="${order.id}">Xóa Đơn Hàng</button>
@@ -108,8 +128,7 @@ export const AdminOrders = async () => {
         </div>
         <style>
         .main-header { display: none !important; }
-        /* Thêm style để hiển thị trạng thái Deleted */
-        .status-deleted { background-color: #ff9800; color: white; }
+        /* Đã loại bỏ style .status-deleted cũ và comment không chính xác */
         </style>
     `;
 };
