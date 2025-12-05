@@ -55,8 +55,8 @@ export  const router = async () => {
 // Lắng nghe sự kiện khi URL thay đổi
 window.addEventListener('popstate', router); 
 
-// FIX: Bỏ khối document.addEventListener('DOMContentLoaded', router) ở đây
-// để tránh xung đột với main.js.
+// BỎ document.addEventListener('DOMContentLoaded', router); để main.js kiểm soát việc khởi tạo.
+
 
 // Tạo hàm điều hướng (navigation) để chuyển đổi giữa các trang
 export const navigateTo = (url) => {

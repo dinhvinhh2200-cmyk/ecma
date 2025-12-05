@@ -10,11 +10,14 @@ const attachHeaderEvents = () => {
     document.querySelectorAll('.spa-link').forEach(link => {
         link.addEventListener('click', (e) => {
             const href = link.getAttribute('href');
-            // Chặn mặc định cho các link có href='#'
-            if (href === '#' || href === '/cart') { 
-                 e.preventDefault();
+            
+            // FIX LỖI QUAN TRỌNG: Chặn hành động mặc định của trình duyệt cho TẤT CẢ link SPA
+            e.preventDefault(); 
+
+            // Chỉ gọi navigateTo nếu link có href hợp lệ
+            if (href && href !== '#') {
+                 navigateTo(href); 
             }
-            navigateTo(href); 
         })
     })
 
@@ -103,7 +106,6 @@ export const renderHeader = async () => {
         
         const newHeader = document.querySelector('.main-header');
         if (newHeader) {
-            // Mặc định header là flex. Router sẽ ẩn nó nếu vào trang admin.
             newHeader.style.display = 'flex';
         }
     }
