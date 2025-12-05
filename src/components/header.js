@@ -2,7 +2,7 @@
 
 import { navigateTo } from "../router";
 import { getCategories } from "../api/categoriesApi";
-import { updateCartCount, getCart } from "../utils/cart"; // ⭐️ IMPORT cart.js
+import { updateCartCount, getCart } from "../utils/cart"; 
 
 // gắn tất cả sự kiện tương tác (tìm kiếm , lọc danh mục)
 const attachHeaderEvents = () => {
@@ -11,7 +11,7 @@ const attachHeaderEvents = () => {
         link.addEventListener('click', (e) => {
             const href = link.getAttribute('href');
             // Chặn mặc định cho các link có href='#'
-            if (href === '#' || href === '/cart') { // Thêm /cart để đảm bảo navigateTo() được gọi
+            if (href === '#' || href === '/cart') { 
                  e.preventDefault();
             }
             navigateTo(href); 
@@ -61,7 +61,7 @@ export const renderHeader = async () => {
         `).join('')
 
     const cart = getCart();
-    const initialCartCount = cart.reduce((total, item) => total + item.quantity, 0); // Lấy số lượng ban đầu
+    const initialCartCount = cart.reduce((total, item) => total + item.quantity, 0); 
 
     const headerHtml = `
     <header class='main-header'>
@@ -82,6 +82,7 @@ export const renderHeader = async () => {
                     Giỏ hàng 
                     <span class="cart-count">${initialCartCount}</span> 
                 </a>
+                <a href='/admin' class='spa-link' style="margin-left: 15px; color: #ff6600;">Admin Dashboard</a>
             </nav>
 
             <div class='search-bar'>
@@ -100,13 +101,13 @@ export const renderHeader = async () => {
     if (!document.querySelector('.main-header')) {
         appContainer.insertAdjacentHTML('beforebegin', headerHtml);
         
-        // FIX: Đảm bảo header mới tạo được hiển thị mặc định (style flex)
         const newHeader = document.querySelector('.main-header');
         if (newHeader) {
+            // Mặc định header là flex. Router sẽ ẩn nó nếu vào trang admin.
             newHeader.style.display = 'flex';
         }
     }
     
     attachHeaderEvents();
-    updateCartCount(); // Cập nhật số lượng giỏ hàng
+    updateCartCount(); 
 }
